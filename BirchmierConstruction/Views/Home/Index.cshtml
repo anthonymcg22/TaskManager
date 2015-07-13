@@ -1,0 +1,66 @@
+﻿@model IEnumerable<BirchmierConstruction.DataModels.Project>
+
+@{
+    ViewBag.Title = "ShowProjects";
+    var result = TempData["ResultMessage"] as String;
+    var exception = TempData["Exception"] as String;
+    var pdf_error = ViewBag.PDF_Error;
+    var pdf_text = ViewBag.PDF_Text;
+}
+
+<div class="jumbotron">
+    <h1>Birchmier Construction Scheduler</h1>
+    @if (Request.IsAuthenticated && User.IsInRole("Creator"))
+    {
+        <h4>@result</h4>
+        <h4>@exception</h4>
+        <h4>@pdf_error</h4>
+        <p>@pdf_text</p>
+        using (Html.BeginForm("Index", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            <input type="file" name="file" style="min-width:100%;"/>
+            <input type="submit" value="Upload pdf file" />
+        }
+    }
+    else
+    {
+        <h2>Please Log in to access your projects and tasks.</h2>
+    }
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <h2>Resources Home</h2>
+        <p>
+            See List of Resources with details, adding/editing contacts. Send updates to employees via text/email.
+        </p>
+        <br />
+        @if (Request.IsAuthenticated)
+        {
+            <a class="btn btn-danger midBig" href="/Resource/Index/">Resources Home</a>
+            <br /><br />
+        }
+
+    </div>
+    <div class="col-md-6">
+        <h2>Current Projects</h2>
+        <p>See Project tasks which you can add, edit, delete as well as a quick glance at resources and employees.</p>
+        <br />
+        @if (Request.IsAuthenticated)
+        {
+            <a class="btn btn-primary midBig" href="/Home/AddProject">Create Project</a>
+        }
+        <br />
+        <hr />
+        @if (Model != null && Model.Count() > 0)
+        {
+            foreach (var project in Model)
+            {
+                <p>
+                    <a class="btn btn-default midBig" href="/Home/ProjectDetails/@project.ProjectId"><span>Go to &nbsp; &raquo; &nbsp; &nbsp;</span><span style="color:blue;font-weight:bold;">@project.Name</span></a>
+                </p>
+            }
+        }
+
+    </div>
+</div>

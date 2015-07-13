@@ -1,0 +1,74 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - Birchmier Scheduler</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                @Html.ActionLink("Birchmier Construction", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li>@Html.ActionLink("Home", "Index", "Home")</li>
+                    @if (User.IsInRole("Creator"))
+                    {
+                        <li>@Html.ActionLink("Send Updates", "UpdateOptions", "Notify")</li>
+                        <li>@Html.ActionLink("Manage Roles", "Index", "Roles")</li>
+                    }
+                    <li>@Html.ActionLink("Add Project", "AddProject", "Home")</li>
+                    <li>@Html.ActionLink("Resources", "Index", "Resource")</li>
+                </ul>
+                @Html.Partial("_LoginPartial")
+            </div>
+        </div>
+    </div>
+    <div class="container body-content">
+        @RenderBody()
+
+        <footer style="clear: both;">
+            <hr />
+            <p>&copy; @DateTime.Now.Year - A <strong>Scheduler Application</strong> for Birchmier Construction</p>
+            <h4 style="float:left;">by Anthony McGrath</h4>
+        </footer>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/myScripts")
+    @RenderSection("scripts", required: false)
+
+    <script type="text/javascript">
+        $(function () { // will trigger when the document is ready
+            $('.datepicker').datepicker({
+                format: 'mm/dd/yyyy', //'yyyy-mm-dd',
+            }); //Initialise any date pickers
+
+            $('.datepicker').on('changeDate', function (ev) {
+                $(this).datepicker('hide');
+            });
+
+            $('.datepicker, .tasks').on('changeDate', function (ev) {
+                var id = $(this).attr('id');
+                var which = id.substring(0, id.indexOf('Date'));
+                AJAX("/Home/Update" + which, { taskid: id.substring(id.indexOf("_") + 1), date: $(this).val() }, function (result) {
+                    if (which.indexOf("Finish") !== -1)
+                        location.reload(true);
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,96 @@
+﻿@model BirchmierConstruction.DataModels.Resource
+@using BirchmierConstruction.DataModels
+@using System.Reflection
+@using System.ComponentModel.DataAnnotations
+<div class="col-md-4">
+    <h2>Details for <strong>@Model.CompanyName</strong></h2>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.CompanyName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CompanyName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Notes)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Notes)
+        </dd>
+
+    </dl>
+    <br />
+
+    <p>
+        @Html.ActionLink("Edit Info", "EditResource", new { id = Model.ResourceId }, new { style = "font-size: 20px;" })
+        <br/>
+        @Html.ActionLink("Back to Resources", "Index", null, new { style = "color: black; font-size: 20px;" })
+    </p>
+</div>
+
+<div class="col-md-4">
+    <h2>Employees</h2>
+    <hr />
+
+    @if (Model.Contacts.Count() == 0)
+    {
+        <h3>You have not added employees yet.</h3>
+        <a class="btn btn-primary midBig" href="/Resource/AddContact/@Model.ResourceId">Add Employee</a>
+    }
+    else
+    {
+        
+        <br />
+        <dl class="dl-horizontal">
+            @for (var i = 0; i < Model.Contacts.Count(); i++)
+            {
+                <dt>@Model.Contacts[i].Name</dt>
+                <dd>
+                    <span style="color:blue;"><a href="/Resource/EditContact/@Model.Contacts[i].ContactId">Edit</a></span> |
+                    <span onclick="return confirm('Are you sure to delete?')">
+                        <a href="/Resource/DeleteContact?id=@Model.Contacts[i].ContactId" style="color:red;"> Delete</a>
+                    </span>
+                </dd>
+                <dd>@Model.Contacts[i].CellNumber</dd>
+
+                CellProvider cp = Model.Contacts[i].CellProvider;
+                DisplayAttribute Provider = cp.GetType().GetMember(cp.ToString())[0].GetCustomAttribute<DisplayAttribute>();
+
+                <dd>@Provider.Name</dd>
+
+                <dd>@Model.Contacts[i].Email</dd>
+            }
+        </dl>
+        <a class="btn btn-primary midBig" href="/Resource/AddContact/@Model.ResourceId">Add Employee</a>
+        <br/><br/>
+        <a href="/Notify/Index/@Model.ResourceId" class="btn btn-success midBig">Email/Text Task Updates</a>
+    }
+
+</div>
+
+<div class="col-md-4">
+    <h2>Assigned Tasks</h2>
+    <hr />
+    @if (Model.Tasks.Count() == 0)
+    {
+        <h3>You have not assigned tasks to this resource.</h3>
+    }
+    else
+    {
+        <dl class="dl-horizontal">
+            @foreach (var task in Model.Tasks)
+            {
+                <dt>@task.Name</dt>
+                <dd>@task.CompletionPercentage % complete</dd>
+                <dd>Start: &nbsp; @String.Format("{0:MM/dd/yyyy}", task.StartDate)</dd>
+                <dd style="margin-bottom: 13px;">Finish: @String.Format("{0:MM/dd/yyyy}", task.FinishDate)</dd>
+            }
+        </dl>
+    }
+
+</div>
+

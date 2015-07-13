@@ -1,0 +1,76 @@
+﻿@model BirchmierConstruction.Models.ProjectViewModel
+
+@ViewBag.ResultMessage
+
+@using (Html.BeginForm("AddProject", "Home", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+{
+    @Html.HiddenFor(m => m.ID)
+    <h2 class="garamond">@(Model.ID == null ? "Create Project" : "Update Project")</h2>
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.Name, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.Name, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(i => i.StartDate, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.TextBoxFor(i => i.StartDate, new { @class = "datepicker project", Value = Model.ID == null ? DateTime.Now.ToString("MM/dd/yyyy") : (Model.StartDate).ToString("MM/dd/yyyy") })
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(i => i.FinishDate, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.TextBoxFor(i => i.FinishDate, new { @class = "datepicker project", Value = Model.ID == null ? DateTime.Now.ToString("MM/dd/yyyy") : Model.FinishDate.ToString("MM/dd/yyyy") })
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(model => model.Notes, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.Notes, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Notes, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.IsBaseLine, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.RadioButtonFor(m => m.IsBaseLine, true) Yes &nbsp; &nbsp;
+            @Html.RadioButtonFor(m => m.IsBaseLine, false) No
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-2">
+            @if (Model.ID == null)
+            {
+                @*@Html.ActionLink("Cancel", "Index", "Home", new { @class = "btn btn-lg btn-info", style="float:right;" })*@
+                <a href="/Home/Index" class="btn btn-lg btn-info" style="float:right;">Cancel</a>
+            }
+            else
+            {
+                <a href="/Home/ProjectDetails/@Model.ID" class="btn btn-lg btn-info" style="float:right;">Back</a>
+            }
+        </div>
+        <div class="col-md-10">
+            <input type="submit" class="btn btn-lg btn-default" value="@(Model.ID == null ? "Create" : "Update")" />
+        </div>
+    </div>
+
+    if (TempData["Model Error"] != null)
+    {
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                @Html.Raw(TempData["Model Error"].ToString())
+            </div>
+        </div>
+
+    }
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

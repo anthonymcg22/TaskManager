@@ -1,0 +1,87 @@
+﻿.datepicker.project {
+ min-width: 280px;
+ line-height: 1.9;
+}
+.datepicker-days table {
+    width: 100%;
+    min-width: 280px;
+}
+.icon {
+    width: 24px;
+    height: 24px;
+}
+table
+{
+    border: 2px solid gray;
+  border-collapse:collapse;
+}
+
+.garamond {
+    font-family: Garamond;
+}
+.ifNoContacts {
+    font-family: Rockwell;
+}
+td > input, select {
+    height: 30px;
+    width: 100%;
+    font-size: 1.1em;
+}
+
+body {
+    padding-top: 50px;
+    padding-bottom: 20px;
+}
+
+h1, h2, h3, h4, h5 {
+    margin: 10px;
+    text-align: center;
+}
+div .midBig {
+    margin: 0 auto;
+    text-align: center;
+    width: 100%;
+}
+.midBig {
+    padding: 5px;
+    font-size: 1.5em;
+    text-align: center;
+}
+
+.squishP p {
+    margin: 2px 5px;
+}
+.responsive-table {
+    width: 100%;
+}
+.responsive-table td, th {
+    text-align: center;
+    font-stretch: extra-condensed;
+}
+.centerTD td,th {
+    text-align: center;
+}
+.double {
+    font-size: 2em;
+}
+
+
+/* Set padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Override the default bootstrap behavior where horizontal description lists 
+   will truncate terms that are too long to fit in the left column 
+*/
+.dl-horizontal dt {
+    white-space: normal;
+}
+
+/* Set width on the form input elements since they're 100% wide by default */
+input,
+select,
+textarea {
+    max-width: 280px;
+}

@@ -1,0 +1,66 @@
+﻿@model BirchmierConstruction.Models.ProjectAndResources
+@using BirchmierConstruction.DataModels
+@using System.Reflection
+@using System.ComponentModel.DataAnnotations
+
+<h1>Resources Home</h1>
+<hr />
+<div class="col-md-6">
+    @if (Model.Resources.Count() == 0)
+    {
+        <h3>You have not added Resources yet.</h3>
+        <strong>Add your resources before making tasks. (You reference resources when making tasks)</strong>
+        <br />
+        <a class="btn-link midBig" href="/Resource/AddResource">Add A Resource</a>
+    }
+    else
+    {
+        <a href="/Resource/AddResource" class="btn btn-danger">Add Resource</a>
+        <ul class="list-group">
+            <li class="list-group-item">
+                <a class="btn btn-primary midBig" id="showhideresourceinfo" href="Javascript:void(0)">Show Employees</a>
+            </li>
+            @foreach (var resource in Model.Resources)
+            {
+                <li class="list-group-item">
+                    <strong>@resource.CompanyName</strong> &raquo; &nbsp; <a style="color:blue;" href="/Resource/ResourceDetails/@resource.ResourceId">Details</a> | <span onclick="return confirm('Are you sure to delete?')">
+                        <a href="/Resource/DeleteResource?id=@resource.ResourceId" style="color:red;"> Delete</a>
+                    </span>
+                    @if (resource.Contacts.Count() == 0)
+                    {
+                        <p class="ifNoContacts">No Employees Added yet.</p>
+                    }
+                    else
+                    {
+                        <ul>
+                            @foreach (var contact in resource.Contacts)
+                            {
+                                <li class="info">
+                                    @contact.Name
+                                    <ul>
+                                        <li>@contact.Email</li>
+                                        <li>@contact.CellNumber</li>
+                                        @{
+                                CellProvider cp = contact.CellProvider;
+                                DisplayAttribute Provider = cp.GetType().GetMember(cp.ToString())[0].GetCustomAttribute<DisplayAttribute>();
+                                        }
+                                        <li>@Provider.Name</li>
+                                    </ul>
+                                </li>
+                            }
+                        </ul>
+                    }
+
+                </li>
+            }
+        </ul>
+    }
+</div>
+<div class="col-md-6">
+    @foreach (var project in Model.Projects)
+    {
+        <a href="/Home/ProjectDetails/@project.ProjectId" class="btn btn-primary midBig" style="background-color: green;">Go To @project.Name</a>
+        <br/><br />
+    }
+</div>
+

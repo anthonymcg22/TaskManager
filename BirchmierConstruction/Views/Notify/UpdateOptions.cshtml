@@ -1,0 +1,29 @@
+﻿@model BirchmierConstruction.Models.ProjectAndResources
+          <form method="post">
+    <div class="col-md-4">
+        <p><span>From:</span> <input style="float:right;" type="date" name="start" value="@String.Format("{0:yyyy-MM-dd}", DateTime.Now)" /></p>
+        <p><span>To:</span> <input style="float:right;" type="date" name="finish" value="@String.Format("{0:yyyy-MM-dd}", DateTime.Now.AddDays(10))" /></p>
+
+        @foreach (var resource in Model.Resources)
+        {
+            <p><input type="checkbox" name="chosenResources" value="@resource.ResourceId" checked="checked"/><span>@resource.CompanyName</span></p>
+        }
+    </div>
+    <div class="col-md-5">
+
+        <h1>Work In Progress</h1>
+
+        @foreach (var task in Model.Tasks)
+        {
+            <p>
+                <input type="checkbox" name="chosenTasks" checked="checked" value="@task._TaskId"/>
+                <span>@task.Order - @task.Name</span><span style="float: right;">@String.Format("{0:MM-dd-yyyy}", task.StartDate) - @String.Format("{0:MM-dd-yyyy}", task.FinishDate)</span>
+            </p>
+        }
+
+    </div>
+    <div class="col-md-3">
+        <hr/>
+        <input type="submit" value="Send Notifications"/>
+    </div>
+</form>
