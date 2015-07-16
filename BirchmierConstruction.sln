@@ -1,20 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Express 2013 for Web
-VisualStudioVersion = 12.0.30723.0
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30501.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BirchmierConstruction.Web", "BirchmierConstruction\BirchmierConstruction.Web.csproj", "{539372FF-3308-4EB4-8470-3EE0B8BA5CC1}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PublishScripts", "PublishScripts", "{D66B8147-133F-49F1-A23C-1021853A6A94}"
-	ProjectSection(SolutionItems) = preProject
-		PublishScripts\AzureWebsitePublishModule.psm1 = PublishScripts\AzureWebsitePublishModule.psm1
-		PublishScripts\Publish-WebApplicationWebsite.ps1 = PublishScripts\Publish-WebApplicationWebsite.ps1
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Configurations", "Configurations", "{54B6904C-CCA2-4E7D-8A3F-426E0880D248}"
-	ProjectSection(SolutionItems) = preProject
-		PublishScripts\Configurations\BirchmierConstruction-WAWS-dev.json = PublishScripts\Configurations\BirchmierConstruction-WAWS-dev.json
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BirchmierConstruction.DataModels", "BirchmierConstruction.DataModels\BirchmierConstruction.DataModels.csproj", "{791792F0-8463-4651-A8AE-5366A0B271DC}"
 EndProject
@@ -41,8 +30,5 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{54B6904C-CCA2-4E7D-8A3F-426E0880D248} = {D66B8147-133F-49F1-A23C-1021853A6A94}
 	EndGlobalSection
 EndGlobal

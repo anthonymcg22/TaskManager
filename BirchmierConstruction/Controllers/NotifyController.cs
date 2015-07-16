@@ -10,7 +10,6 @@ using BirchmierConstruction.DataModels;
 using BirchmierConstruction.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
-using SendGrid;
 
 namespace BirchmierConstruction.Controllers
 {
