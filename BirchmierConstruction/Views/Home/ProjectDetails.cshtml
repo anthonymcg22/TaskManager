@@ -124,13 +124,11 @@
                     </tr>
                 }
             </tbody>
-
         </table>
     }
 
     @using (Html.BeginForm("AddTask", "Home", FormMethod.Post))
     {
-
         @Html.HiddenFor(x => Model.taskVM.Task._TaskId)
         @Html.HiddenFor(x => Model.taskVM.Task.ProjectId)
         @Html.HiddenFor(x => Model.taskVM.Task.Order)

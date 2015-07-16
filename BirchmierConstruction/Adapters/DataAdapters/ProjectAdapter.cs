@@ -28,11 +28,8 @@ namespace BirchmierConstruction.Adapters.DataAdapters
                 model.Project = db.Projects.Include("Tasks").Where(x => x.ProjectId == id && x.UserId == userid).FirstOrDefault();
                 model.Resources = db.Resources.Include("Tasks").Include("Contacts").Where(x => x.UserId == userid).ToList();
             }
-            model.taskVM = new AddTaskVM()
-            {
-                Resources = GetResourcesDropDownList(userid),
-                Task = PrepNewTask(id),
-            };
+            model.taskVM = new AddTaskVM() { Task = PrepNewTask(id) };
+            model.taskVM.GetResourcesDropDownList(userid);
 
             return model;
         }
@@ -68,24 +65,6 @@ namespace BirchmierConstruction.Adapters.DataAdapters
             }
             return ProjID;
         }
-        public List<SelectListItem> GetResourcesDropDownList(string userid)
-        {
-            List<SelectListItem> ResourcesDropDownList;
-            using (ApplicationDbContext db = new ApplicationDbContext())
-            {
-                var Resources = db.Resources.Include("Tasks").Where(x => x.UserId == userid).OrderBy(x => x.CompanyName).ToList();
-
-                ResourcesDropDownList = new List<SelectListItem> { new SelectListItem { Selected = true, Value = "0", Text = Resources.Count() != 0 ? "No Resource Assigned" : "Go Add Resources First" } };
-
-                for (var i = 0; i < Resources.Count(); i++)
-                {
-                    ResourcesDropDownList.Add(new SelectListItem { Selected = false, Value = Resources[i].ResourceId.ToString(), Text = Resources[i].CompanyName });
-                }
-            }
-            return ResourcesDropDownList;
-        }
-
-
         public _Task PrepNewTask(int id)
         {
             _Task task = new _Task { ProjectId = id };

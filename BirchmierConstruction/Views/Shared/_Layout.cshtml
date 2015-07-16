@@ -51,18 +51,14 @@
 
     <script type="text/javascript">
         $(function () { // will trigger when the document is ready
-            $('.datepicker').datepicker({
-                format: 'mm/dd/yyyy', //'yyyy-mm-dd',
-            }); //Initialise any date pickers
-
-            $('.datepicker').on('changeDate', function (ev) {
+            $('.datepicker').datepicker({ format: 'mm/dd/yyyy', /*'yyyy-mm-dd',*/}).on('changeDate', function (ev) {
                 $(this).datepicker('hide');
             });
 
             $('.datepicker, .tasks').on('changeDate', function (ev) {
                 var id = $(this).attr('id');
                 var which = id.substring(0, id.indexOf('Date'));
-                AJAX("/Home/Update" + which, { taskid: id.substring(id.indexOf("_") + 1), date: $(this).val() }, function (result) {
+                AJAX("/Home/Update" + which, { taskid: id.slice(id.indexOf("_") + 1), date: $(this).val() }, function (result) {
                     if (which.indexOf("Finish") !== -1)
                         location.reload(true);
                 });
