@@ -17,11 +17,7 @@ namespace BirchmierConstruction.Adapters.Interfaces
         _Task PrepNewTask(int projectId);
         void AddTask(_Task task);
         int DeleteTask(int id);
-        void EditTaskDuration(int taskId, string duration);
-        void EditTask(_Task task, string duration = null);
-
         List<SelectListItem> GetResourcesDropDownList(string userid);
-
-        bool SaveBaseLine(int id, bool save);
+        bool SaveBaseLine(int id, bool save, string userID);
     }
 }

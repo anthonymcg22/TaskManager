@@ -34,6 +34,18 @@ function AJAX(url, data, callback, type, errorFunc) {
         });
 };
 
+var saveBaseLine = function (me, id) {
+    AJAX("/Home/SaveBaseLine",
+        { id: id, save: me.checked },
+        function (result) {
+            $('#saveMessage').fadeTo(100, 1).html(result.Message).css('color', result.Success ? 'green' : 'red')
+                .fadeTo(1800, 0);
+        }, "POST",
+        function (result) {
+            $('#saveMessage').fadeTo(100, 1).html(result).css('color', 'red').fadeTo(1800, 0);
+        });
+};
+
 var Delete = function (me, prop) {
     var id = me.id.split("_")[1];
     AJAX("/Home/Delete" + prop, { projID: id }, function (result) {

@@ -25,7 +25,7 @@ namespace BirchmierConstruction.Adapters.DataAdapters
             ProjectAndResources model = new ProjectAndResources();
             using (ApplicationDbContext db = new ApplicationDbContext())
             {
-                model.Project = db.Projects.Include("Tasks").Where(x => x.ProjectId == id).FirstOrDefault();
+                model.Project = db.Projects.Include("Tasks").Where(x => x.ProjectId == id && x.UserId == userid).FirstOrDefault();
                 model.Resources = db.Resources.Include("Tasks").Include("Contacts").Where(x => x.UserId == userid).ToList();
             }
             model.taskVM = new AddTaskVM()
@@ -33,7 +33,6 @@ namespace BirchmierConstruction.Adapters.DataAdapters
                 Resources = GetResourcesDropDownList(userid),
                 Task = PrepNewTask(id),
             };
-            model.taskVM.GetPercentages();
 
             return model;
         }
@@ -52,12 +51,7 @@ namespace BirchmierConstruction.Adapters.DataAdapters
                     db.SaveChanges();
                 }
             }
-            catch (System.Data.Entity.Infrastructure.DbUpdateException e)
-            {
-                string message = string.Empty;
-                message += string.Format("Error: {0} Message: {1}", e.GetType(), e.Message);
-                message += e.InnerException;
-            }
+            catch (Exception e) { }
         }
 
         public int DeleteTask(int id)
@@ -74,23 +68,6 @@ namespace BirchmierConstruction.Adapters.DataAdapters
             }
             return ProjID;
         }
-
-        public void EditTask(_Task task, string duration)
-        {
-            using (ApplicationDbContext db = new ApplicationDbContext())
-            {
-                Project project = (from p in db.Projects where p.ProjectId == task.ProjectId select p).FirstOrDefault();
-                var tasks = db.Tasks.Where(t => t.ProjectId == project.ProjectId).ToList();
-
-                var currentTask = tasks.Where(x => x._TaskId == task._TaskId).FirstOrDefault();
-
-                currentTask.Predecessors = task.Predecessors;
-                currentTask.DateUpdated = DateTime.Now;
-
-                db.SaveChanges();
-            }
-        }
-
         public List<SelectListItem> GetResourcesDropDownList(string userid)
         {
             List<SelectListItem> ResourcesDropDownList;
@@ -123,34 +100,28 @@ namespace BirchmierConstruction.Adapters.DataAdapters
             return task;
         }
 
-        public bool SaveBaseLine(int id, bool save)
+        public bool SaveBaseLine(int id, bool save, string userID)
         {
-            try 
+            try
             {
                 using (ApplicationDbContext db = new ApplicationDbContext())
                 {
-                    var project = db.Projects.Where(x => x.ProjectId == id).FirstOrDefault();
-                    project.IsBaseLine = save;
-                    project.DateUpdated = DateTime.Now;
-                    db.SaveChanges();
+                    var project = db.Projects.Where(x => x.ProjectId == id && x.UserId == userID).FirstOrDefault();
+                    if (project != null)
+                    {
+                        project.IsBaseLine = save;
+                        project.DateUpdated = DateTime.Now;
+                        db.SaveChanges();
+                        return true;
+                    }
                 }
-                return true;
+                return false;
             }
-            catch {
+            catch
+            {
                 return false;
             }
         }
-
-        public void EditTaskDuration(int taskId, string duration)
-        {
-            using (var db = new ApplicationDbContext())
-            {
-                _Task task = db.Tasks.Where(t => t._TaskId == taskId).FirstOrDefault();
-                EditTask(task, duration);
-            }
-        }
-
-
         public int AddProject(ProjectViewModel project, string userId)
         {
             Project p = new Project();
@@ -183,11 +154,9 @@ namespace BirchmierConstruction.Adapters.DataAdapters
                         p.DateUpdated = DateTime.Now;
                     }
                 }
-
                 db.SaveChanges();
                 db.Entry(p).GetDatabaseValues();
             }
-
             return p.ProjectId;
         }
     }

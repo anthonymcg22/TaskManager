@@ -11,18 +11,15 @@ namespace BirchmierConstruction.Models
     {
         public _Task Task { get; set; }
         public List<SelectListItem> Resources { get; set; }
-        public List<SelectListItem> Percentages { get; set; }
-
-        public void GetPercentages()
+        public List<SelectListItem> Percentages
         {
-            Percentages = new List<SelectListItem>
-               {
-                   new SelectListItem {Selected = true, Value = "0", Text = "0 %"},
-                   new SelectListItem {Selected = false, Value = "25", Text = "25 %"},
-                   new SelectListItem {Selected = false, Value = "50", Text = "50 %"},
-                   new SelectListItem {Selected = false, Value = "75", Text = "75 %"},
-                   new SelectListItem {Selected = false, Value = "100", Text = "100 %"}
-               };
+            get
+            {
+                var list = new List<SelectListItem>();
+                foreach (int i in new int[] { 0, 25, 50, 75, 100 })
+                    list.Add(new SelectListItem() { Selected = i == 0, Value = i.ToString(), Text = i + " %" });
+                return list;
+            }
         }
     }
 }

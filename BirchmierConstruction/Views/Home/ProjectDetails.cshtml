@@ -24,7 +24,7 @@
             <p><strong>Notes:</strong> <span style="float: right;">@pro.Notes</span></p>
 
             <p style="margin: 1px auto;">
-                <input type="checkbox" value="true" name="save" @if (pro.IsBaseLine) { @isChecked  } onchange="saveBaseLine(this)" />
+                <input type="checkbox" value="true" name="save" @if (pro.IsBaseLine) { @isChecked   } onchange="saveBaseLine(this, '@pro.ProjectId')" />
                 Saved as Baseline &nbsp;&nbsp;
             </p>
             <p style="margin: 1px auto;" id="saveMessage">&nbsp;</p>
@@ -65,7 +65,7 @@
             <tbody>
                 @foreach (var item in pro.Tasks.OrderBy(x => x.Order))
                 {
-                    <tr @if (item.CompletionPercentage == 100) { <text> style="background-color: lightblue;" </text>                              } id="taskRow_@item._TaskId">
+                    <tr @if (item.CompletionPercentage == 100) { <text> style="background-color: lightblue;" </text>                               } id="taskRow_@item._TaskId">
                         <td>@item.Order</td>
                         <td id="TaskNameCell_@item._TaskId">
                             <span id="TaskName_@item._TaskId" class="pre_edit">@item.Name</span>
@@ -76,7 +76,7 @@
                             <select id="taskCompletionList_@item._TaskId" onchange="changeCompletion(this)">
                                 @for (int i = 0; i < Model.taskVM.Percentages.Count; i++)
                                 {
-                                    <option @if (item.CompletionPercentage == Convert.ToInt32(Model.taskVM.Percentages[i].Value)) { @selected  } value="@Model.taskVM.Percentages[i].Value">
+                                    <option @if (item.CompletionPercentage == Convert.ToInt32(Model.taskVM.Percentages[i].Value)) { @selected   } value="@Model.taskVM.Percentages[i].Value">
                                         @Model.taskVM.Percentages[i].Value %
                                     </option>
                                 }
@@ -103,7 +103,7 @@
                                 @for (int i = 0; i < Model.taskVM.Resources.Count; i++)
                                 {
                                     var current = Model.taskVM.Resources[i];
-                                    <option @if (item.ResourceId == Convert.ToInt32(current.Value)) { @selected  } value="@current.Value">
+                                    <option @if (item.ResourceId == Convert.ToInt32(current.Value)) { @selected   } value="@current.Value">
                                         @current.Text
                                     </option>
                                 }
@@ -170,18 +170,4 @@
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
-
-    <script type="text/javascript">
-        var saveBaseLine = function (me) {
-            AJAX("/Home/SaveBaseLine",
-                { id: '@pro.ProjectId', save: me.checked },
-                function (result) {
-                    $('#saveMessage').fadeTo(100, 1).html(result.Message).css('color', result.Success ? 'green' : 'red')
-                        .fadeTo(1800, 0);
-                }, "POST",
-                function (result) {
-                    $('#saveMessage').fadeTo(100, 1).html(result).css('color', 'red').fadeTo(1800, 0);
-                });
-        };
-    </script>
 }

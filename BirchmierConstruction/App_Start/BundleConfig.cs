@@ -29,9 +29,9 @@ namespace BirchmierConstruction
                       "~/Content/bootstrap-datepicker.css",  // ** NEW for Bootstrap Datepicker
                       "~/Content/site.css"));
 
-            //adding own javascript/jQuery file
+            //adding own javascript file
             bundles.Add(new ScriptBundle("~/bundles/myScripts").Include(
-                "~/Scripts/showhidecontactinfo.js"));
+                "~/Scripts/main.js"));
 
             // Set EnableOptimizations to false for debugging. For more information,
             // visit http://go.microsoft.com/fwlink/?LinkId=301862

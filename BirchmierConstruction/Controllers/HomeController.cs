@@ -432,7 +432,7 @@ namespace BirchmierConstruction.Controllers
         [HttpPost]
         public JsonResult SaveBaseLine(int id, bool save)
         {
-            bool success = _adapter.SaveBaseLine(id, save);
+            bool success = _adapter.SaveBaseLine(id, save, UserId);
             return Json(new
             {
                 Success = success,
