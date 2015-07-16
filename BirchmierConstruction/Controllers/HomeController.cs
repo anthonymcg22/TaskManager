@@ -26,6 +26,7 @@ namespace BirchmierConstruction.Controllers
         IProjectAdapter _adapter;
         //getting id of current user
         static string UserId { get { return System.Web.HttpContext.Current.User.Identity.GetUserId(); } }
+        public bool Success { get; set; }
 
         #region Controller Constructors
         public HomeController() //constructor, initializes _adapter
@@ -293,7 +294,7 @@ namespace BirchmierConstruction.Controllers
                     Project p = db.Projects.Find(projID);  //find project
 
                     if (p == null)  //if project is not found say so
-                        return Json(new { Success = "False", Result = "The project was not found and could not be deleted" });
+                        return Json(new { Success = false, Result = "The project was not found and could not be deleted" });
 
                     //remove all tasks referencing the project
                     while (db.Tasks.Where(t => t.ProjectId == projID).Count() != 0)
@@ -318,14 +319,14 @@ namespace BirchmierConstruction.Controllers
                         message += string.Format("Property: {0} Error: {1}", validationError.PropertyName, validationError.ErrorMessage);
                     }
                 }
-                return Json(new { Success = "False", Result = message });
+                return Json(new { Success = false, Result = message });
             }
             catch (Exception e)
             {
-                return Json(new { Success = "False", Result = e.GetType() + ": " + e.Message });
+                return Json(new { Success = false, Result = e.GetType() + ": " + e.Message });
             }
 
-            return Json(new { Success = "True", Result = string.Format("The project has been deleted and {0} associated tasks have been deleted", numTasks) });
+            return Json(new { Success = true, Result = string.Format("The project has been deleted and {0} associated tasks have been deleted", numTasks) });
         }
 
         [Authorize]
@@ -432,29 +433,32 @@ namespace BirchmierConstruction.Controllers
         [HttpPost]
         public JsonResult SaveBaseLine(int id, bool save)
         {
-            bool success = _adapter.SaveBaseLine(id, save, UserId);
+            Success = _adapter.SaveBaseLine(id, save, UserId);
             return Json(new
             {
-                Success = success,
-                Message = success ? "Project has been updated!" : "Error updating project!"
+                Success = Success,
+                Message = Success ? "Project has been updated!" : "Error updating project!"
             }, JsonRequestBehavior.AllowGet);
         }
 
         [Authorize]
         public JsonResult UpdateCompletion(int taskid, int percent)
         {
-            bool success;
+            Success = false;
             using (var db = new ApplicationDbContext())
             {
                 var task = db.Tasks.Where(t => t._TaskId == taskid).FirstOrDefault();
-                task.CompletionPercentage = percent;
-                task.DateUpdated = DateTime.Now;
-                success = db.SaveChanges() == 1;
+                if (task != null)
+                {
+                    task.CompletionPercentage = percent;
+                    task.DateUpdated = DateTime.Now;
+                    Success = db.SaveChanges() == 1;
+                }
             }
             return Json(new
             {
-                Success = success,
-                Message = success ? "Updated successfully!" : "Failed to update!",
+                Success = Success,
+                Message = Success ? "Updated successfully!" : "Failed to update!",
                 TaskId = taskid,
                 Percent = percent
             }, JsonRequestBehavior.AllowGet);
@@ -465,46 +469,56 @@ namespace BirchmierConstruction.Controllers
         {
             if (resourceid == 0)
                 resourceid = null;
-            bool success;
-            string resourceName;
+            Success = false;
+            var resourceName = String.Empty;
+
             using (var db = new ApplicationDbContext())
             {
                 var task = db.Tasks.Where(t => t._TaskId == taskid).FirstOrDefault();
-                task.ResourceId = resourceid;
-                task.DateUpdated = DateTime.Now;
-                var resource = db.Resources.Where(r => r.ResourceId == resourceid && r.UserId == UserId).FirstOrDefault();
-                resourceName = resourceid == null ? "No Resource Assigned" : resource == null ? "No Resource found" : resource.CompanyName;
-                success = db.SaveChanges() == 1;
+                if (task != null)
+                {
+                    task.ResourceId = resourceid;
+                    task.DateUpdated = DateTime.Now;
+                    var resource = db.Resources.Where(r => r.ResourceId == resourceid && r.UserId == UserId).FirstOrDefault();
+                    resourceName = resourceid == null ? "No Resource Assigned" : resource == null ? "No Resource found" : resource.CompanyName;
+                    Success = db.SaveChanges() == 1;
+                }
             }
-            return Json(new { Success = success, Message = success ? "Updated successfully!" : "Failed to update!", TaskId = taskid, Resource = resourceName, ResourceID = resourceid }, JsonRequestBehavior.AllowGet);
+            return Json(new { Success = Success, Message = Success ? "Updated successfully!" : "Failed to update!", TaskId = taskid, Resource = resourceName, ResourceID = resourceid }, JsonRequestBehavior.AllowGet);
         }
 
         [Authorize]
         public JsonResult UpdateTaskName(int taskid, string name)
         {
-            bool success;
+            Success = false;
             using (ApplicationDbContext db = new ApplicationDbContext())
             {
                 var task = db.Tasks.Where(x => x._TaskId == taskid).FirstOrDefault();
-                task.Name = name;
-                task.DateUpdated = DateTime.Now;
-                success = db.SaveChanges() == 1;
+                if (task != null)
+                {
+                    task.Name = name;
+                    task.DateUpdated = DateTime.Now;
+                    Success = db.SaveChanges() == 1;
+                }
             }
-            return Json(new { Success = success, Message = success ? "Updated successfully!" : "Failed to update!", TaskId = taskid, TaskName = name }, JsonRequestBehavior.AllowGet);
+            return Json(new { Success = Success, Message = Success ? "Updated successfully!" : "Failed to update!", TaskId = taskid, TaskName = name }, JsonRequestBehavior.AllowGet);
         }
 
         [Authorize]
         public JsonResult UpdateTaskPredecessors(int taskid, string name)
         {
-            bool success;
+            Success = false;
             using (ApplicationDbContext db = new ApplicationDbContext())
             {
                 var task = db.Tasks.Where(x => x._TaskId == taskid).FirstOrDefault();
-                task.Predecessors = name;
-                task.DateUpdated = DateTime.Now;
-                success = db.SaveChanges() == 1;
+                if (task != null)
+                {
+                    task.Predecessors = name;
+                    task.DateUpdated = DateTime.Now;
+                    Success = db.SaveChanges() == 1;
+                }
             }
-            return Json(new { Success = success, Message = success ? "Updated successfully!" : "Failed to update!", TaskId = taskid, TaskName = name }, JsonRequestBehavior.AllowGet);
+            return Json(new { Success = Success, Message = Success ? "Updated successfully!" : "Failed to update!", TaskId = taskid, TaskName = name }, JsonRequestBehavior.AllowGet);
         }
 
         [Authorize]
@@ -514,11 +528,14 @@ namespace BirchmierConstruction.Controllers
             using (ApplicationDbContext db = new ApplicationDbContext())
             {
                 var task = db.Tasks.FirstOrDefault(x => x._TaskId == taskid);
-                task.StartDate = dateTime;
-                task.DateUpdated = DateTime.Now;
-                db.SaveChanges();
+                if (task != null)
+                {
+                    task.StartDate = dateTime;
+                    task.DateUpdated = DateTime.Now;
+                    db.SaveChanges();
+                }
             }
-            return Json(new { Success = true, TaskId = taskid, Date = dateTime.ToString("ddd MM/dd/yyyy") }, JsonRequestBehavior.AllowGet);
+            return Json(new { Success = true, TaskId = taskid }, JsonRequestBehavior.AllowGet);
         }
 
         [Authorize]
@@ -528,11 +545,14 @@ namespace BirchmierConstruction.Controllers
             using (ApplicationDbContext db = new ApplicationDbContext())
             {
                 var task = db.Tasks.FirstOrDefault(x => x._TaskId == taskid);
-                task.FinishDate = dateTime;
-                task.DateUpdated = DateTime.Now;
-                db.SaveChanges();
+                if (task != null)
+                {
+                    task.FinishDate = dateTime;
+                    task.DateUpdated = DateTime.Now;
+                    db.SaveChanges();
+                }
             }
-            return Json(new { Success = true, TaskId = taskid, Date = dateTime.ToString("ddd MM/dd/yyyy") }, JsonRequestBehavior.AllowGet);
+            return Json(new { Success = true, TaskId = taskid }, JsonRequestBehavior.AllowGet);
         }
     }
 }
